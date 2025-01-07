@@ -1,16 +1,18 @@
-//import react into the bundle
-import React from 'react'
-import {createRoot} from 'react-dom/client'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 
-//include your index.scss file into the bundle
-import "../styles/index.css";
 
-//import your own components
-import Layout from './layout.js'
+const container = document.querySelector("#app");
 
-//
-const root = createRoot(document.querySelector("#app"))
-
-//render your react application
-root.render(<Layout/>)
-
+if (container) {
+    const root = createRoot(container);
+    root.render(
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    );
+} else {
+    console.error("El contenedor con ID 'root' no fue encontrado en el DOM.");
+}

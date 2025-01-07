@@ -1,45 +1,38 @@
 const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
-		},
-		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
-	};
+  return {
+      store: {
+          contacts: []
+      },
+      actions: {
+            fetchContacts: async () => {
+                try {
+                    const response = await fetch("https://playground.4geeks.com/contact/agendas/Alvaro/contacts");
+                    const data = await response.json();
+            
+                    // Extrae el array de contactos
+                    console.log("Datos recibidos de la API:", data);
+                    const contacts = data.contacts || []; // Asegúrate de que sea un array, aunque esté vacío
+                    setStore({ contacts }); // Guarda el array de contactos en el store
+                } catch (error) {
+                    console.error("Error al obtener contactos:", error.message);
+                }
+            },
+          addContact: async contact => {
+              await fetch("https://playground.4geeks.com/contact/agendas/Alvaro/contacts", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(contact)
+              });
+              getActions().fetchContacts();
+          },
+          deleteContact: async id => {
+              await fetch(`https://playground.4geeks.com/contact/agendas/Alvaro/contacts/${id}`, {
+                  method: "DELETE"
+              });
+              getActions().fetchContacts();
+          }
+      }
+  };
 };
 
 export default getState;
